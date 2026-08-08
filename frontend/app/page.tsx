@@ -32,7 +32,7 @@ const NICKNAME_SUGGESTIONS = [
   "QuantumVeil", "GlitchReaper", "StormCipher", "HexBlade", "NullVector"
 ];
 
-const VS_CODE_OPTIONS = {
+const VS_CODE_OPTIONS: any = {
   fontSize: 14,
   fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
   fontLigatures: true,
