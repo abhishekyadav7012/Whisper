@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Editor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io('https://whisper-mi0t.onrender.com');
 
 const MOODS = [
   { emoji: "😊", label: "Happy" }, 
@@ -295,7 +295,7 @@ export default function Dashboard() {
   const fetchNotifications = async () => {
     if (!username || username === "anonymous") return;
     try {
-      const res = await fetch(`http://localhost:5000/api/notifications/${username}`);
+      const res = await fetch(`https://whisper-mi0t.onrender.com/api/notifications/${username}`);
       const data = await res.json();
       setNotifications(Array.isArray(data) ? data : []);
       setUnreadNotifCount(Array.isArray(data) ? data.filter((n: any) => !n.read).length : 0);
@@ -303,19 +303,19 @@ export default function Dashboard() {
   };
 
   const markAllNotifsRead = async () => {
-    await fetch(`http://localhost:5000/api/notifications/${username}/read-all`, { method: 'PUT' });
+    await fetch(`https://whisper-mi0t.onrender.com/api/notifications/${username}/read-all`, { method: 'PUT' });
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     setUnreadNotifCount(0);
   };
 
   const markNotifRead = async (id: string) => {
-    await fetch(`http://localhost:5000/api/notifications/${id}/read`, { method: 'PUT' });
+    await fetch(`https://whisper-mi0t.onrender.com/api/notifications/${id}/read`, { method: 'PUT' });
     setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
     setUnreadNotifCount(prev => Math.max(0, prev - 1));
   };
 
   const deleteNotif = async (id: string) => {
-    await fetch(`http://localhost:5000/api/notifications/${id}`, { method: 'DELETE' });
+    await fetch(`https://whisper-mi0t.onrender.com/api/notifications/${id}`, { method: 'DELETE' });
     const notif = notifications.find(n => n._id === id);
     setNotifications(prev => prev.filter(n => n._id !== id));
     if (notif && !notif.read) setUnreadNotifCount(prev => Math.max(0, prev - 1));
@@ -588,12 +588,12 @@ export default function Dashboard() {
   };
 
   const fetchCollabs = async () => {
-    const res = await fetch('http://localhost:5000/api/collabs');
+    const res = await fetch('https://whisper-mi0t.onrender.com/api/collabs');
     setCollabs(await res.json());
   };
 
   const handleCreateCollab = async () => {
-    await fetch('http://localhost:5000/api/collabs', {
+    await fetch('https://whisper-mi0t.onrender.com/api/collabs', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...newCollabData, admin: username, members: [{ username, displayName: username }] })
     });
@@ -604,7 +604,7 @@ export default function Dashboard() {
 
   const handleCollabJoinSubmit = async () => {
     if (!collabJoinModal) return;
-    const res = await fetch(`http://localhost:5000/api/collabs/${collabJoinModal._id}/join`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/collabs/${collabJoinModal._id}/join`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, displayName: collabJoinNickname.trim() || username, password: collabJoinPassword })
     });
@@ -613,14 +613,14 @@ export default function Dashboard() {
   };
 
   const deleteCollab = async (id: string) => {
-    if (confirm("Delete this collab?")) { await fetch(`http://localhost:5000/api/collabs/${id}`, { method: 'DELETE' }); fetchCollabs(); }
+    if (confirm("Delete this collab?")) { await fetch(`https://whisper-mi0t.onrender.com/api/collabs/${id}`, { method: 'DELETE' }); fetchCollabs(); }
   };
 
   const handleOpenEditor = (collab: any) => { setEditorPasswordModal(collab); setEditorPasswordInput(""); setEditorPasswordError(""); };
 
   const handleEditorPasswordSubmit = async () => {
     if (!editorPasswordModal) return;
-    const res = await fetch(`http://localhost:5000/api/collabs/${editorPasswordModal._id}/verify-editor`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/collabs/${editorPasswordModal._id}/verify-editor`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: editorPasswordInput, username })
     });
@@ -631,19 +631,19 @@ export default function Dashboard() {
 
   // ---- COMMUNITIES ----
   const fetchCommunities = async () => {
-    const res = await fetch('http://localhost:5000/api/communities');
+    const res = await fetch('https://whisper-mi0t.onrender.com/api/communities');
     setCommunities(await res.json());
   };
 
   const fetchCommunityDetail = async (id: string) => {
-    const res = await fetch(`http://localhost:5000/api/communities/${id}`);
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/communities/${id}`);
     const data = await res.json();
     setActiveCommunity(data);
     setCommunityView('detail');
   };
 
   const handleCreateCommunity = async () => {
-    const res = await fetch('http://localhost:5000/api/communities', {
+    const res = await fetch('https://whisper-mi0t.onrender.com/api/communities', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...newCommunityData, admin: username })
     });
@@ -665,7 +665,7 @@ export default function Dashboard() {
   };
 
   const doRequestJoinCommunity = async (communityId: string, password: string) => {
-    const res = await fetch(`http://localhost:5000/api/communities/${communityId}/request-join`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/communities/${communityId}/request-join`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
@@ -687,7 +687,7 @@ export default function Dashboard() {
   };
 
   const handleLeaveCommunity = async (communityId: string) => {
-    await fetch(`http://localhost:5000/api/communities/${communityId}/leave`, {
+    await fetch(`https://whisper-mi0t.onrender.com/api/communities/${communityId}/leave`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username })
     });
@@ -696,7 +696,7 @@ export default function Dashboard() {
   };
 
   const handleApproveCommunityRequest = async (communityId: string, requesterUsername: string) => {
-    const res = await fetch(`http://localhost:5000/api/communities/${communityId}/requests/${requesterUsername}/approve`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/communities/${communityId}/requests/${requesterUsername}/approve`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }
     });
     if (res.ok) {
@@ -705,7 +705,7 @@ export default function Dashboard() {
   };
 
   const handleRejectCommunityRequest = async (communityId: string, requesterUsername: string) => {
-    const res = await fetch(`http://localhost:5000/api/communities/${communityId}/requests/${requesterUsername}/reject`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/communities/${communityId}/requests/${requesterUsername}/reject`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }
     });
     if (res.ok) {
@@ -715,7 +715,7 @@ export default function Dashboard() {
 
   const handleCommunityPost = async () => {
     if (!communityPostInput.trim() && communityMedia.length === 0) return;
-    await fetch(`http://localhost:5000/api/communities/${activeCommunity._id}/posts`, {
+    await fetch(`https://whisper-mi0t.onrender.com/api/communities/${activeCommunity._id}/posts`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, content: communityPostInput, media: communityMedia })
     });
@@ -735,7 +735,7 @@ export default function Dashboard() {
   };
 
   const handleCommunityLike = async (postId: string) => {
-    await fetch(`http://localhost:5000/api/communities/${activeCommunity._id}/posts/${postId}/like`, {
+    await fetch(`https://whisper-mi0t.onrender.com/api/communities/${activeCommunity._id}/posts/${postId}/like`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username })
     });
@@ -744,7 +744,7 @@ export default function Dashboard() {
 
   const handleCommunityComment = async () => {
     if (!communityCommentInput.trim() || !communityCommentModal) return;
-    await fetch(`http://localhost:5000/api/communities/${activeCommunity._id}/posts/${communityCommentModal._id}/comment`, {
+    await fetch(`https://whisper-mi0t.onrender.com/api/communities/${activeCommunity._id}/posts/${communityCommentModal._id}/comment`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, text: communityCommentInput })
     });
@@ -755,13 +755,13 @@ export default function Dashboard() {
   };
 
   const deleteCommunityPost = async (postId: string) => {
-    await fetch(`http://localhost:5000/api/communities/${activeCommunity._id}/posts/${postId}`, { method: 'DELETE' });
+    await fetch(`https://whisper-mi0t.onrender.com/api/communities/${activeCommunity._id}/posts/${postId}`, { method: 'DELETE' });
     fetchCommunityDetail(activeCommunity._id);
   };
 
   const deleteCommunity = async (id: string) => {
     if (confirm("Delete this community?")) {
-      await fetch(`http://localhost:5000/api/communities/${id}`, { method: 'DELETE' });
+      await fetch(`https://whisper-mi0t.onrender.com/api/communities/${id}`, { method: 'DELETE' });
       fetchCommunities();
       if (activeCommunity?._id === id) { setCommunityView('list'); setActiveCommunity(null); }
     }
@@ -769,12 +769,12 @@ export default function Dashboard() {
   // ---- END COMMUNITIES ----
 
   const fetchData = async () => {
-    let url = 'http://localhost:5000/api/thoughts';
-    if (view === "home") url = 'http://localhost:5000/api/thoughts/recent'; 
-    else if (view === "popular") url = 'http://localhost:5000/api/thoughts/popular'; 
-    else if (view === "workspace") url = `http://localhost:5000/api/thoughts/user/${username}`;
-    else if (view === "profile" && selectedProfileUser) url = `http://localhost:5000/api/thoughts/user/${selectedProfileUser}`;
-    else if (view === "explore") url = selectedCategory === "All" ? 'http://localhost:5000/api/thoughts' : `http://localhost:5000/api/thoughts/category/${selectedCategory}`;
+    let url = 'https://whisper-mi0t.onrender.com/api/thoughts';
+    if (view === "home") url = 'https://whisper-mi0t.onrender.com/api/thoughts/recent'; 
+    else if (view === "popular") url = 'https://whisper-mi0t.onrender.com/api/thoughts/popular'; 
+    else if (view === "workspace") url = `https://whisper-mi0t.onrender.com/api/thoughts/user/${username}`;
+    else if (view === "profile" && selectedProfileUser) url = `https://whisper-mi0t.onrender.com/api/thoughts/user/${selectedProfileUser}`;
+    else if (view === "explore") url = selectedCategory === "All" ? 'https://whisper-mi0t.onrender.com/api/thoughts' : `https://whisper-mi0t.onrender.com/api/thoughts/category/${selectedCategory}`;
     const res = await fetch(url);
     const data = await res.json();
     const formattedData = Array.isArray(data) ? data : [];
@@ -788,7 +788,7 @@ export default function Dashboard() {
   useEffect(() => {
     const delay = setTimeout(async () => {
       if (searchQuery.trim().length > 1) {
-        const res = await fetch(`http://localhost:5000/api/users/search?q=${searchQuery}`);
+        const res = await fetch(`https://whisper-mi0t.onrender.com/api/users/search?q=${searchQuery}`);
         setUserSearchResults(await res.json());
       } else setUserSearchResults([]);
     }, 300);
@@ -836,7 +836,7 @@ export default function Dashboard() {
   const removePostFile = (index: number) => setPostFiles(prev => prev.filter((_, i) => i !== index));
 
   const handleInteraction = async (id: string, type: string) => {
-    const res = await fetch(`http://localhost:5000/api/thoughts/${id}/${type}`, {
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/thoughts/${id}/${type}`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username })
     });
     if (res.ok) fetchData();
@@ -846,7 +846,7 @@ export default function Dashboard() {
     if (!commentInput.trim() || !commentModalPost || isPostingComment) return;
     setIsPostingComment(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/thoughts/${commentModalPost._id}/comment`, {
+      const res = await fetch(`https://whisper-mi0t.onrender.com/api/thoughts/${commentModalPost._id}/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username || "Anonymous", text: commentInput.trim() })
@@ -872,19 +872,19 @@ export default function Dashboard() {
     else { navigator.clipboard.writeText(text); alert("Secret copied to clipboard!"); }
   };
 
-  const fetchRooms = async () => { const res = await fetch('http://localhost:5000/api/rooms'); setRooms(await res.json()); };
+  const fetchRooms = async () => { const res = await fetch('https://whisper-mi0t.onrender.com/api/rooms'); setRooms(await res.json()); };
 
   const deleteRoom = async (id: string) => {
-    if (confirm("Admin Action: Delete this room?")) { await fetch(`http://localhost:5000/api/rooms/${id}`, { method: 'DELETE' }); fetchRooms(); }
+    if (confirm("Admin Action: Delete this room?")) { await fetch(`https://whisper-mi0t.onrender.com/api/rooms/${id}`, { method: 'DELETE' }); fetchRooms(); }
   };
 
   const deletePost = async (id: string) => {
-    if (confirm("Delete this secret permanently?")) { await fetch(`http://localhost:5000/api/thoughts/${id}`, { method: 'DELETE' }); fetchData(); }
+    if (confirm("Delete this secret permanently?")) { await fetch(`https://whisper-mi0t.onrender.com/api/thoughts/${id}`, { method: 'DELETE' }); fetchData(); }
   };
 
   const deleteAccount = async () => {
     if (confirm("WARNING: Delete account permanently? This cannot be undone.")) {
-      const res = await fetch(`http://localhost:5000/api/users/${username}`, { method: 'DELETE' });
+      const res = await fetch(`https://whisper-mi0t.onrender.com/api/users/${username}`, { method: 'DELETE' });
       if (res.ok) handleLogout();
     }
   };
@@ -910,7 +910,7 @@ export default function Dashboard() {
   const sendRoomMessage = async (mediaData: any = null) => {
     if (!chatInput.trim() && !mediaData) return;
     const msgText = chatInput; setChatInput("");
-    await fetch(`http://localhost:5000/api/rooms/${selectedRoom._id}/messages`, {
+    await fetch(`https://whisper-mi0t.onrender.com/api/rooms/${selectedRoom._id}/messages`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: roomDisplayName || username, text: msgText, media: mediaData })
     });
@@ -922,22 +922,22 @@ export default function Dashboard() {
   };
 
   const deleteRoomMsg = async (msgId: string) => {
-    await fetch(`http://localhost:5000/api/rooms/${selectedRoom._id}/messages/${msgId}`, { method: 'DELETE' });
+    await fetch(`https://whisper-mi0t.onrender.com/api/rooms/${selectedRoom._id}/messages/${msgId}`, { method: 'DELETE' });
   };
 
   const fetchInbox = async () => {
-    const res = await fetch(`http://localhost:5000/api/messages/inbox/${username}`);
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/messages/inbox/${username}`);
     setInbox(await res.json());
   };
 
   const fetchPMs = async (recipient: string) => {
-    const res = await fetch(`http://localhost:5000/api/messages/${username}/${recipient}`);
+    const res = await fetch(`https://whisper-mi0t.onrender.com/api/messages/${username}/${recipient}`);
     setPrivateMessages(await res.json());
   };
 
   const handleSendPM = async (mediaData: any = null) => {
     if (!pmText.trim() && !mediaData || !selectedRecipient) return;
-    await fetch('http://localhost:5000/api/messages', {
+    await fetch('https://whisper-mi0t.onrender.com/api/messages', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sender: username, receiver: selectedRecipient, text: pmText, media: mediaData })
     });
@@ -952,7 +952,7 @@ export default function Dashboard() {
   const deleteChat = async () => {
     if (!selectedRecipient) return;
     if (confirm(`Clear all messages with @${selectedRecipient}? This will only clear them from your account.`)) {
-      await fetch(`http://localhost:5000/api/messages/${username}/${selectedRecipient}`, { method: 'DELETE' });
+      await fetch(`https://whisper-mi0t.onrender.com/api/messages/${username}/${selectedRecipient}`, { method: 'DELETE' });
       setPrivateMessages([]);
       setSelectedRecipient(null);
       fetchInbox();
@@ -961,7 +961,7 @@ export default function Dashboard() {
 
   const handlePost = async () => {
     if (!input.trim() && images.length === 0 && videos.length === 0 && postFiles.length === 0) return;
-    const url = editingId ? `http://localhost:5000/api/thoughts/${editingId}` : 'http://localhost:5000/api/thoughts';
+    const url = editingId ? `https://whisper-mi0t.onrender.com/api/thoughts/${editingId}` : 'https://whisper-mi0t.onrender.com/api/thoughts';
     const res = await fetch(url, {
       method: editingId ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -988,7 +988,7 @@ export default function Dashboard() {
       setSettingsMsgType('error'); setSettingsMsg("New password must be at least 6 characters"); return;
     }
     try {
-      const res = await fetch('http://localhost:5000/api/auth/change-password', {
+      const res = await fetch('https://whisper-mi0t.onrender.com/api/auth/change-password', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, currentPassword: settingsCurrentPassword, newPassword: settingsNewPassword })
       });
@@ -1004,7 +1004,7 @@ export default function Dashboard() {
   useEffect(() => {
     const delay = setTimeout(async () => {
       if (searchUser.trim()) {
-        const res = await fetch(`http://localhost:5000/api/users/search?q=${searchUser}`);
+        const res = await fetch(`https://whisper-mi0t.onrender.com/api/users/search?q=${searchUser}`);
         setFoundUsers(await res.json());
       } else setFoundUsers([]);
     }, 300);
@@ -2263,7 +2263,7 @@ export default function Dashboard() {
             <input type="password" placeholder="Password (Optional)…" className="w-full bg-zinc-900 p-3 rounded-xl mb-3 border border-zinc-800 outline-none focus:border-zinc-600 text-sm transition" value={newRoomData.password} onChange={e => setNewRoomData({...newRoomData, password: e.target.value})} />
             <textarea placeholder="Description…" className="w-full bg-zinc-900 p-3 rounded-xl mb-4 border border-zinc-800 outline-none focus:border-zinc-600 text-sm h-20 transition" value={newRoomData.description} onChange={e => setNewRoomData({...newRoomData, description: e.target.value})} />
             <div className="flex gap-2">
-              <button onClick={async () => { await fetch('http://localhost:5000/api/rooms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({...newRoomData, admin: username}) }); setIsCreateRoomOpen(false); fetchRooms(); }} className="flex-1 bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm uppercase transition">Create</button>
+              <button onClick={async () => { await fetch('https://whisper-mi0t.onrender.com/api/rooms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({...newRoomData, admin: username}) }); setIsCreateRoomOpen(false); fetchRooms(); }} className="flex-1 bg-blue-600 hover:bg-blue-500 py-2.5 rounded-xl font-bold text-sm uppercase transition">Create</button>
               <button onClick={() => setIsCreateRoomOpen(false)} className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-2.5 rounded-xl font-bold text-sm uppercase transition">Cancel</button>
             </div>
           </div>
