@@ -56,7 +56,7 @@ const VS_CODE_OPTIONS = {
   folding: true,
   foldingHighlight: true,
   showFoldingControls: 'mouseover',
-  lineNumbers: 'on',
+  lineNumbers: 'on' as const,
   glyphMargin: true,
   padding: { top: 16, bottom: 16 },
   suggestOnTriggerCharacters: true,
